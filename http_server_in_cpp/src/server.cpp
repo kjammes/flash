@@ -22,7 +22,7 @@ void start_server(const std::string& ip, int port) {
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
-    server_addr.sin_addr.s_addr = inet_addr(ip.c_str());
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     if (bind(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
         std::perror("Bind failed");
@@ -48,8 +48,9 @@ void start_server(const std::string& ip, int port) {
         read(client_fd, buffer, BUFFER_SIZE - 1);
         buffer[BUFFER_SIZE - 1] = '\0';
         std::string path = extract_path(buffer);
+        std::string method = extract_method(buffer);
 
-        std::string response = "HTTP/1.1 200 OK\r\n\r\nRequested path: " + path + "\r\n";
+        std::string response = "HTTP/1.1 200 OK\r\n\r\n" + method + " " + path + " on port " + std::to_string(port) + "\r\n";
         write(client_fd, response.c_str(), response.size());
 
         close(client_fd);
