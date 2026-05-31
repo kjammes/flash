@@ -2,8 +2,15 @@
 #define UTILS_HPP
 
 #include <string>
+#include <unordered_map>
 
-std::string extract_path(const std::string& request);
-std::string extract_method(const std::string& request);
+struct Request {
+    std::string method;
+    std::string path;
+    std::string body;
+    std::unordered_map<std::string, std::string> headers;
+};
+
+Request parse_request(const std::string& raw_request);
 
 #endif
